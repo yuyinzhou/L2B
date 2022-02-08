@@ -1,0 +1,3 @@
+from data_loader.Cifar_dataset import CIFAR10, CIFAR100
+from data_loader.ISIC_dataset import ISIC2019
+from data_loader.Clothing1M_dataset import clothing_dataset
