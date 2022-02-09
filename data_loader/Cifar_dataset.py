@@ -198,7 +198,6 @@ class CIFAR10(data.Dataset):
                     assert False, "Invalid corruption type '{}' given. Must be in {'unif', 'flip', 'hierarchical'}".format(
                         corruption_type)
 
-
                 if is_main_process() and not os.path.exists(self.path):
                     print(self.train_idx[:10])
 
@@ -225,7 +224,6 @@ class CIFAR10(data.Dataset):
                         file.write(str(l) + '\n')
                     file.close()
                     print(str(100 * self.noisy_or_not.count(1.0) / len(self.noisy_or_not)) + '% data havs noise')
-
                 else:
                     time.sleep(20)
                     print('using the same noisy label')

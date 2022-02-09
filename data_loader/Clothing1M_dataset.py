@@ -7,7 +7,7 @@ import json
 import torch
 
 class clothing_dataset(Dataset): 
-    def __init__(self, root, transform, mode, num_samples=0, num_class=14, num_meta = 1400):
+    def __init__(self, root, transform, mode, num_samples=0, num_class=14, num_meta = 14313):
         
         self.root = root
         self.transform = transform
@@ -61,9 +61,12 @@ class clothing_dataset(Dataset):
                 for l in lines:
                     img_path = '%s/images/'%self.root+l[7:]
                     label = self.test_labels[img_path]
-                    #if class_num[label] < (num_meta / 14) and len(self.val_imgs) < num_meta:
-                    self.val_imgs.append(img_path)
-                    #    class_num[label] += 1
+                    if num_meta != 14313:
+                        if class_num[label] < (num_meta / 14) and len(self.val_imgs) < num_meta:
+                             self.val_imgs.append(img_path)
+                             class_num[label] += 1
+                    else:
+                        self.val_imgs.append(img_path)
                     
     def __getitem__(self, index):  
          

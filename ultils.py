@@ -116,10 +116,12 @@ def prepare_set(args):
             transforms.Normalize((0.6959, 0.6537, 0.6371), (0.3113, 0.3192, 0.3214)),
         ])
         trainset =  clothing_dataset(args.data_path,transform=transform_train, mode='all',num_samples=args.num_batch*args.train_batch_size)
-        metaset = clothing_dataset(args.data_path,transform=transform_test, mode='val')
+        metaset = clothing_dataset(args.data_path,transform=transform_test, mode='val', num_meta=args.num_meta)
         valset = clothing_dataset(args.data_path,transform=transform_test, mode='val')
         testset =  clothing_dataset(args.data_path,transform=transform_test, mode='test')
         args.num_classes = 14
+        if is_main_process():
+            print(len(metaset))
         return  trainset, metaset, valset, testset, args.num_classes
 
     if args.dataset == 'ISIC':
@@ -212,7 +214,7 @@ def prepare_dataloder(args):
                                                                            rank=args.local_rank)
         else:
             meta_sampler = None
-        test_sampler = torch.utils.data.distributed.DistributedSampler(testset, shuffle=True,
+        test_sampler = torch.utils.data.distributed.DistributedSampler(testset, shuffle=False,
                                                                        num_replicas=torch.distributed.get_world_size(),
                                                                        rank=args.local_rank)
         eval_batch_size = args.eval_batch_size // torch.distributed.get_world_size()

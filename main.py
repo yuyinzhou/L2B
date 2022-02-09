@@ -17,11 +17,12 @@ from ultils import *
 
 
 model_names = ['res18', 'res50', 'wrn28_10', 'res18_224']
-data_path = ['./data', 'isic_data/ISIC_2019_Training_Input', './data/clothing1M']
+data_path = ['./data', 'isic_data/ISIC_2019_Training_Input', '/data1/data/clothing1m/clothing1M']
 
 parser = argparse.ArgumentParser(description='Baseline Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
 parser.add_argument('--num_epochs', default=300, type=int)
+parser.add_argument('--multi_runs', default=1, type=int)
 parser.add_argument('--dataset', default='cifar10', type=str)
 parser.add_argument('--reweight_label', action='store_true')
 parser.add_argument('--exp', type=str,
@@ -69,13 +70,16 @@ parser.add_argument('--warm_up', type=int, default=1,
                     help='warm up training with CE')
 parser.add_argument('--hard_weight', action='store_true')
 parser.add_argument('--mixup', action='store_true')
-
-
+parser.add_argument('--eval', action='store_true')
+parser.add_argument('--resume', type=str, default=None,
+                    help='path to checkpoint')
+parser.add_argument('--no_val_data', action='store_true',
+                    help='using validation set or not')
 
 def main(args):  
       global best_acc
       best_acc = 0
-
+      start_time = time.time()
       current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
       exp = args.arch + '_' +'temperature_'+str(args.temperature)+\
                  '_'+'corruption_'+str(args.corruption_prob)+ '_'+\
@@ -92,23 +96,37 @@ def main(args):
           print('==> Preparing data..')
       if args.local_rank == 0:
           print(args)
+          if args.mixup:
+              print('Using Mixup For training')
 
       if args.arch == 'res50':
           net = ResNet50(num_classes=args.num_classes).cuda(device=args.gpuid)
 
       elif args.arch == 'res18':
           net = PreActResNet18(num_classes=args.num_classes).cuda(device=args.gpuid)
-
-
       elif args.arch == 'wrn28_10':
           net = wrn28_10(num_classes=args.num_classes).cuda(device=args.gpuid)
       elif args.arch == 'res18_224':
-          net = ResNet18(num_classes=args.num_classes).cuda(device=args.gpuid)
+          net = ResNet18(num_classes=args.num_classes)
+      if args.resume:
+          path = args.resume
+          dict = torch.load(path, map_location='cpu')['net']
+          net_dict = net.state_dict()
+          idy = 0
+          for k, v in dict.items():
+              k = k.replace('module.', '')
+              if k in net_dict:
+                  net_dict[k] = v
+                  idy += 1
+          print(len(net_dict), idy, 'update state dict already')
+          net.load_state_dict(net_dict)
+      net = net.cuda(device=args.gpuid)
 
       if args.distribute:
           net = torch.nn.parallel.DistributedDataParallel(net, device_ids=[args.gpuid])
 
       if args.baseline:
+          print('using the norm CE loss')
           criterion = nn.CrossEntropyLoss().cuda()
       else:
           criterion = nn.CrossEntropyLoss(reduction="none").cuda(args.gpuid)
@@ -135,13 +153,27 @@ def main(args):
       if not args.dataset =='clothing1m':
           trainloader, testloader, metaloader, train_sampler, test_sampler, meta_sampler = prepare_dataloder(args)
 
+      if args.eval:
+          trainloader, testloader, metaloader, train_sampler, test_sampler, meta_sampler = prepare_dataloder(args)
+          acc, test_loss = val(0, testloader, net, writer, args)
+          print('-----------------------------------------------------')
+          print(' CURRENT loss: {:.4f}'.format(test_loss.avg))
+          print(' BEST accuracy: {:.4f}'.format(acc))
+          print('-----------------------------------------------------')
+          return
+
       for epoch in range(args.num_epochs):
           if  args.dataset == 'clothing1m':
-              trainloader, testloader, metaloader, train_sampler, test_sampler, meta_sampler = prepare_dataloder(args)
+              if not args.no_val_data:
+                  trainloader, testloader, metaloader, train_sampler, test_sampler, meta_sampler = prepare_dataloder(args)
 
+              else:
+                  if is_main_process():
+                      print('using pseudo labeled training subset for training')
+                  trainloader, testloader, metaloader, train_sampler, test_sampler, meta_sampler = prepare_dataloder_clothing1m(args)
           train(epoch, trainloader, metaloader, train_sampler, net, meta_sampler, test_sampler,
                 optimizer, optimizer_meta, criterion,  writer , args)
-          acc, test_loss = val(epoch,testloader,  net, writer, args )
+          acc, test_loss = val(epoch, testloader,  net, writer, args )
 
           scheduler.step()
           if acc > best_acc :
@@ -163,13 +195,17 @@ def main(args):
               print('At epoch: {:03d} BEST accuracy: {:.4f}'.format(epoch, best_acc))
               print('At epoch: {:03d} CURRENT accuracy: {:.4f}'.format(epoch, acc))
               print('-----------------------------------------------------')
+      if is_main_process():
+          current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+          end_time = time.time()
+          print(current_time, end_time-start_time)
       return  best_acc
 
 
 
 
 
-def train(epoch, trainloader,metaloader, train_sampler, net, meta_sampler, test_sampler,
+def train(epoch, trainloader, metaloader, train_sampler, net, meta_sampler, test_sampler,
           optimizer, optimizer_meta, criterion,  writer , args):
     
     if args.distribute:
@@ -339,7 +375,7 @@ def train(epoch, trainloader,metaloader, train_sampler, net, meta_sampler, test_
         print('At epoch: {:03d} AVERAGE TRAIN loss : {:.4f}'.format(epoch, train_loss.avg))
 
 
-def val(epoch,testloader,  net, writer, args ):
+def val(epoch, testloader,  net, writer, args):
     net.eval()
     test_loss = AverageMeter()
     top1 =AverageMeter()
@@ -393,11 +429,12 @@ if __name__ == '__main__':
             init_method='env://'
         )
         args.gpuid = torch.device(f'cuda:{args.local_rank}')
+        args.seed = args.local_rank
     else:
         args.gpuid = torch.device(f'cuda:{args.gpuid}')
 
     best = []
-    for i in range(5):
+    for i in range(args.multi_runs):
         args.seed = i
         best.append(main(args))
     print(best)
