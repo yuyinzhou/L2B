@@ -14,8 +14,6 @@ If you use this code for your research, please cite our paper ["Learning to Boot
       archivePrefix={arXiv},
       primaryClass={cs.CV}
 }
-
-
 ```
 
 ## Requirements
