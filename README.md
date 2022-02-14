@@ -6,13 +6,11 @@ This repo is the official implementation of our paper ["Learning to Bootstrap fo
 If you use this code for your research, please cite our paper ["Learning to Bootstrap for Combating Label Noise"](https://arxiv.org/pdf/2202.04291.pdf).
 
 ```
-@misc{zhou2022learning,
-      title={Learning to Bootstrap for Combating Label Noise}, 
-      author={Yuyin Zhou and Xianhang Li and Fengze Liu and Xuxi Chen and Lequan Yu and Cihang Xie and Matthew P. Lungren and Lei Xing},
-      year={2022},
-      eprint={2202.04291},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@article{zhou2022learning,
+  title   = {Learning to Bootstrap for Combating Label Noise}, 
+  author  = {Yuyin Zhou and Xianhang Li and Fengze Liu and Xuxi Chen and Lequan Yu and Cihang Xie and Matthew P. Lungren and Lei Xing},
+  journal = {arXiv preprint arXiv:2202.04291},
+  year    = {2022},
 }
 ```
 
