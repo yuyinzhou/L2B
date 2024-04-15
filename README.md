@@ -1,16 +1,16 @@
-# Learning to Bootstrap for Combating Label Noise
+# L2B: Learning to Bootstrap for Combating Label Noise
 
-This repo is the official implementation of our paper ["Learning to Bootstrap for Combating Label Noise"](https://arxiv.org/pdf/2202.04291.pdf).
+This repo is the official implementation of our CVPR 2024 paper ["L2B: Learning to Bootstrap for Combating Label Noise"](https://arxiv.org/pdf/2202.04291.pdf).
 
 ## Citation
-If you use this code for your research, please cite our paper ["Learning to Bootstrap for Combating Label Noise"](https://arxiv.org/pdf/2202.04291.pdf).
+If you use this code for your research, please cite our paper ["L2B: Learning to Bootstrap for Combating Label Noise"](https://arxiv.org/pdf/2202.04291.pdf).
 
 ```
-@article{zhou2022learning,
-  title   = {Learning to Bootstrap for Combating Label Noise}, 
+@proceedings{zhou2024l2b,
+  title   = {L2B: Learning to Bootstrap for Combating Label Noise}, 
   author  = {Yuyin Zhou and Xianhang Li and Fengze Liu and Xuxi Chen and Lequan Yu and Cihang Xie and Matthew P. Lungren and Lei Xing},
-  journal = {arXiv preprint arXiv:2202.04291},
-  year    = {2022},
+  booktitle = {CVPR},
+  year    = {2024},
 }
 ```
 
