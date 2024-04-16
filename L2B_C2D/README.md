@@ -1,9 +1,3 @@
-# Contrast to Divide: self-supervised pre-training for learning with noisy labels
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/contrast-to-divide-self-supervised-pre-1/image-classification-on-mini-webvision-1-0)](https://paperswithcode.com/sota/image-classification-on-mini-webvision-1-0?p=contrast-to-divide-self-supervised-pre-1) [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/contrast-to-divide-self-supervised-pre-1/image-classification-on-clothing1m)](https://paperswithcode.com/sota/image-classification-on-clothing1m?p=contrast-to-divide-self-supervised-pre-1)
-
-This is an official implementation of 
-"Contrast to Divide: self-supervised pre-training for learning with noisy labels".
-The code is based on [DivideMix](https://github.com/LiJunnan1992/DivideMix) implementation.
 
 ## Results
 Following tables summarize main results of the paper:
@@ -41,6 +35,8 @@ or for mini-WebVision
 python3 Train_webvision.py --p_threshold 0.03 --num_class 50 --data_path /path/to/webvision --imagenet_data_path /path/to/imagenet --method selfsup```
 ```
 
-To run C2D with ELR+ just use the self-suprevised pretrained models with the original [code](https://github.com/shengliu66/ELR/).
-## License
-This project is licensed under the terms of the MIT license.
+# L2B + C2D
+
+To reproduce our results with C2D method:
+first follow above instruction to prepare env and datasets,
+please find  scripts with hyper-parameters located in <code> L2B_C2D/exp </code>

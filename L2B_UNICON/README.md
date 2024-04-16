@@ -1,9 +1,5 @@
-# UNICON-Noisy-Label
-Official Implementation of the CVPR 2022 paper "UNICON: Combating Label Noise Through Uniform Selection and Contrastive Learning"
-https://arxiv.org/pdf/2203.14542.pdf
 
-<!-- ![Teaser](./Figure/Teaser.png) -->
-![Framework](./Figure/Snip20220331_3.png)
+
 
 # Example Run
 After creating a virtual environment, run
@@ -34,20 +30,12 @@ Example run (Webvision)
 	python Train_webvision.py 
 
 
+
+# L2B + UNICON
+To reproduce our results with UNICON method:
+first follow above instruction to prepare env and datasets,
+please find  scripts with hyper-parameters located in <code> L2B_UNICON/exp/exp </code>
+
 # Dataset
 For datasets other than CIFAR10 and CIFAR100, you need to download them from their corresponsing website.
 
-# Reference 
-If you have any questions, do not hesitate to contact at nazmul.karim18@knights.ucf.edu
-
-Also, if you find our work useful please cite: 
-
-	@InProceedings{Karim_2022_CVPR,
-	    author    = {Karim, Nazmul and Rizve, Mamshad Nayeem and Rahnavard, Nazanin and Mian, Ajmal and Shah, Mubarak},
-	    title     = {UniCon: Combating Label Noise Through Uniform Selection and Contrastive Learning},
-	    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
-	    month     = {June},
-	    year      = {2022},
-	    pages     = {9676-9686}
-	}
- 
