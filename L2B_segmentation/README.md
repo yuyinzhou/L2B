@@ -1,5 +1,5 @@
 # Apply L2B for segmentation under noisy supervision
-## data preparation
+## Data preparation
 ### PROMISE12 dataset
 The original dataset can be downloaded from https://promise12.grand-challenge.org. You can also download our preprocessed data from https://drive.google.com/file/d/1Xaj9MuYxaqzA28rq8E3VZe6A9rZI5SvU/view?usp=share_link. And put it under `./data/Prostate_data/` folder.
 
