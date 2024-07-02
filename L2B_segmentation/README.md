@@ -9,7 +9,7 @@ To generate synthetic noisy labels with corrupted ratios around 40%, please run 
 python data_proprocess.py
 ```
 
-### Training under noisy supervision
+## Training under noisy supervision
 To train a UNet++ model using PROMISE12 dataset with corrupted ratios around 40%, please run the following script:
 ```
 python train.py --dataset Prostate --train_root ./data/Prostate_data/l2b_train_scan3_corrupt_06/  --meta_root ./data/Prostate_data/meta_train_scan3/ --vali_root ./data/Prostate_data/all_data_prepro/  --datasplitpath ./data_split/PROMISE12_data_split.mat
