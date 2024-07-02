@@ -11,8 +11,21 @@ info = loadmat(r'./data_split/PROMISE12_data_split.mat')
 loadp = r'./data/Prostate_data/all_data_prepro/'
 corrupt_path = r'./data/Prostate_data/Corrupt_data_scan3_06/'
 savep = r'./data/Prostate_data/l2b_train_scan3_corrupt_06/'
+savep_meta = r'./data/Prostate_data/meta_train_scan3/'
 os.makedirs(corrupt_path, exist_ok=True)
 os.makedirs(savep, exist_ok=True)
+os.makedirs(savep_meta, exist_ok=True)
+
+meta_l2b_list = info['meta_l2b']
+for k in meta_l2b_list:
+    inf = np.load(loadp + k + '.npy', allow_pickle=True).item()
+    imgall = inf['img']
+    gtall = inf['label']
+    for i in range(gtall.shape[0]):
+        img = imgall[i, :, :]
+        gt = gtall[i, :, :]
+        sp = savep + k + '_' + str(i) + '.npy'
+        np.save(sp, {'img': img, 'label': gt})
 
 vali_l2b_list = info['train_l2b']
 Sall = []
