@@ -12,7 +12,7 @@ from utils import *
 import numpy as np
 from Metrics import dice_coeff
 from tensorboardX import SummaryWriter
-from Models.Unetplpl_2D import NestedUNet
+from Unetplpl_2D import NestedUNet
 import matplotlib.pyplot as plt
 import math
 import warnings
